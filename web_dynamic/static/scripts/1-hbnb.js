@@ -1,5 +1,5 @@
 $(() => {
-  const inputBtn = $('.INPUT#btn-amenity');
+  const inputBtn = $('INPUT#btn-amenity');
   inputBtn.change(function () {
     getValueUsingClass();
   });
