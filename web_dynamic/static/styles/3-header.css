@@ -11,4 +11,19 @@ header {
 	height: 70px;
 	width: 100%;
 	border-bottom: 1px solid #CCCCCC;
+	display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+div#api_status {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: #cccccc;
+	margin-right: 30px;
+}
+
+body header div.available {
+	background: #ff545f;
 }
