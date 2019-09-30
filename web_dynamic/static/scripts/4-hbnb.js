@@ -27,6 +27,7 @@ $(() => {
 
 searchPlace(myPlaceSearch);
 function searchPlace(data) {
+//search places
   $.post({
     url: placesSearch,
     data: JSON.stringify(data),
