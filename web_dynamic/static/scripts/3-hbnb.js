@@ -36,7 +36,6 @@ $(() => {
         names.push(place.name.toLowerCase());
       });
       names.sort();
-      console.log(names);
       const op = data.sort(
         (a, b) =>
           names.indexOf(a.name.toLowerCase()) -
@@ -52,7 +51,7 @@ $(() => {
         ********************** -->
 
              <div class="title">
-               <h2>${place.name}</h2>
+               <h2>${place.name.normalize()}</h2>
 
                <div class="price_by_night">
                  ${place.price_by_night}
@@ -86,7 +85,7 @@ $(() => {
       USER
       **********************  -->
              <div class="description">
-               <p>${place.description}</p>
+               <p>${place.description.normalize()}</p>
              </div>
            <!-- End 1 PLACE Article -->
  
