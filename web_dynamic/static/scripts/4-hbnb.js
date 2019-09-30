@@ -6,7 +6,7 @@ $(() => {
   const url = 'http://localhost:5001/api/v1/status/';
   const placesSearch = 'http://localhost:5001/api/v1/places_search';
   const myPlaceSearch = { states: [], cities: [], amenities: [] };
-  const button =$('SECTION #button');
+  const button = $('SECTION #button');
 
   inputBtn.change(function () {
     getValueUsingClass();
@@ -25,29 +25,29 @@ $(() => {
     }
   });
 
-searchPlace(myPlaceSearch);
-function searchPlace(data) {
-//search places
-  $.post({
-    url: placesSearch,
-    data: JSON.stringify(data),
-    contentType: 'application/json',
-    dataType: 'json',
-    success: function (data) {
-      const names = [];
-      data.forEach(place => {
-        names.push(place.name.toLowerCase());
-      });
-      names.sort();
-      const op = data.sort(
-        (a, b) =>
-          names.indexOf(a.name.toLowerCase()) -
-            names.indexOf(b.name.toLowerCase()) || b.score - a.score
-      );
-      places.empty();
-      op.forEach(place => {
-        places.append(
-          $('<article></article>').html(`
+  searchPlace(myPlaceSearch);
+  function searchPlace (data) {
+    // search places
+    $.post({
+      url: placesSearch,
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (data) {
+        const names = [];
+        data.forEach(place => {
+          names.push(place.name.toLowerCase());
+        });
+        names.sort();
+        const op = data.sort(
+          (a, b) =>
+            names.indexOf(a.name.toLowerCase()) -
+              names.indexOf(b.name.toLowerCase()) || b.score - a.score
+        );
+        places.empty();
+        op.forEach(place => {
+          places.append(
+            $('<article></article>').html(`
 
         <!-- **********************
         BEGIN 1 PLACE
@@ -92,21 +92,18 @@ function searchPlace(data) {
              </div>
            <!-- End 1 PLACE Article -->
         `)
-        );
-      });
-    }
+          );
+        });
+      }
+    });
+  }
+
+  button.on('click', () => {
+    const data = {};
+    data.amenities = getValueUsingClass();
+    searchPlace(data);
   });
-}
-
-
-button.on('click', () => {
-  const data = {};
-  data.amenities = getValueUsingClass();
-  searchPlace(data);
 });
-
-});
-
 
 function getValueUsingClass () {
   const h4Val = $('DIV.amenities H4');
@@ -123,4 +120,4 @@ function getValueUsingClass () {
     h4Val.html('&nbsp;');
   }
   return cartId;
-} 
+}
