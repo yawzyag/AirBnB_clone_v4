@@ -6,10 +6,9 @@ $(() => {
   const url = 'http://localhost:5001/api/v1/status/';
   const placesSearch = 'http://localhost:5001/api/v1/places_search';
   const myPlaceSearch = { states: [], cities: [], amenities: [] };
-  const button =$('SECTION #button');
+  const button = $('SECTION #button');
   const inputBtnState = $('INPUT#btn-state');
   const inputBtnCity = $('INPUT#btn-city');
-
 
   inputBtn.change(function () {
     getValueUsingClass();
@@ -36,29 +35,29 @@ $(() => {
     }
   });
 
-searchPlace(myPlaceSearch);
-function searchPlace(data) {
-//search places
-  $.post({
-    url: placesSearch,
-    data: JSON.stringify(data),
-    contentType: 'application/json',
-    dataType: 'json',
-    success: function (data) {
-      const names = [];
-      data.forEach(place => {
-        names.push(place.name.toLowerCase());
-      });
-      names.sort();
-      const op = data.sort(
-        (a, b) =>
-          names.indexOf(a.name.toLowerCase()) -
+  searchPlace(myPlaceSearch);
+  function searchPlace (data) {
+    // search places
+    $.post({
+      url: placesSearch,
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (data) {
+        const names = [];
+        data.forEach(place => {
+          names.push(place.name.toLowerCase());
+        });
+        names.sort();
+        const op = data.sort(
+          (a, b) =>
+            names.indexOf(a.name.toLowerCase()) -
             names.indexOf(b.name.toLowerCase()) || b.score - a.score
-      );
-      places.empty();
-      op.forEach(place => {
-        places.append(
-          $('<article></article>').html(`
+        );
+        places.empty();
+        op.forEach(place => {
+          places.append(
+            $('<article></article>').html(`
 
         <!-- **********************
         BEGIN 1 PLACE
@@ -103,21 +102,19 @@ function searchPlace(data) {
              </div>
            <!-- End 1 PLACE Article -->
         `)
-        );
-      });
-    }
+          );
+        });
+      }
+    });
+  }
+
+  button.on('click', () => {
+    const data = {};
+    data.amenities = getValueUsingClass();
+    data.states = getStateUsingClass();
+    data.cities = getCityUsingClass();
+    searchPlace(data);
   });
-}
-
-
-button.on('click', () => {
-  const data = {};
-  data.amenities = getValueUsingClass();
-  data.states = getStateUsingClass();
-  data.cities = getCityUsingClass();
-  searchPlace(data);
-});
-
 });
 
 function getValueUsingClass () {
@@ -151,7 +148,7 @@ function getStateCityUsingClass () {
     cartName.push($(this).attr('data-name'));
   });
   if (cartName.length > 0) {
-    h4Val.empty()
+    h4Val.empty();
     h4Val.append(cartName.join(', '));
   } else {
     h4Val.html('&nbsp;');
@@ -159,17 +156,15 @@ function getStateCityUsingClass () {
 }
 
 function getStateUsingClass () {
-  const h4Val = $('DIV.locations H4');
   const cartId = [];
 
-  $('INPUT#btn-city:checked').each(function () {
+  $('INPUT#btn-state:checked').each(function () {
     cartId.push($(this).attr('data-id'));
   });
   return cartId;
 }
 
 function getCityUsingClass () {
-  const h4Val = $('DIV.locations H4');
   const cartId = [];
 
   $('INPUT#btn-city:checked').each(function () {
