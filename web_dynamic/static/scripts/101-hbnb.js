@@ -1,8 +1,7 @@
 /* eslint-env jquery */
-$(window).on('load', function () {
+$(() => {
   const inputBtn = $('INPUT#btn-amenity');
   const circle = $('DIV#api_status');
-
   const places = $('DIV SECTION.places');
   const url = 'http://localhost:5001/api/v1/status/';
   const placesSearch = 'http://localhost:5001/api/v1/places_search';
@@ -10,8 +9,6 @@ $(window).on('load', function () {
   const button = $('SECTION #button');
   const inputBtnState = $('INPUT#btn-state');
   const inputBtnCity = $('INPUT#btn-city');
-
-  searchPlace(myPlaceSearch);
 
   inputBtn.change(function () {
     getValueUsingClass();
@@ -38,118 +35,115 @@ $(window).on('load', function () {
     }
   });
 
-  async function searchPlace (data) {
-    // search places
-    await $.post({
-      url: placesSearch,
-      data: JSON.stringify(data),
-      contentType: 'application/json',
-      dataType: 'json',
-      success: function (data) {
-        const names = [];
-        data.forEach(place => {
-          names.push(place.name.toLowerCase());
-        });
-        names.sort();
-        const op = data.sort(
-          (a, b) =>
-            names.indexOf(a.name.toLowerCase()) -
-                names.indexOf(b.name.toLowerCase()) || b.score - a.score
-        );
-        places.empty();
-        op.forEach(place => {
-          places.append(
-            $('<article></article>').html(`
-  
-          <!-- **********************
-          BEGIN 1 PLACE
-          ********************** -->
-  
-               <div class="title">
-                 <h2>${place.name.normalize()}</h2>
-  
-                 <div class="price_by_night">
-                   ${place.price_by_night}
-                 </div>
-               </div>
-               <div class="information">
-                 <div class="max_guest">
-                   <i class="fa fa-users fa-3x" aria-hidden="true"></i>
-  
-                   <br />
-  
-                   ${place.max_guest} Guests
-                 </div>
-                 <div class="number_rooms">
-                   <i class="fa fa-bed fa-3x" aria-hidden="true"></i>
-  
-                   <br />
-  
-                   ${place.number_rooms} Bedrooms
-                 </div>
-                 <div class="number_bathrooms">
-                   <i class="fa fa-bath fa-3x" aria-hidden="true"></i>
-  
-                   <br />
-  
-                   ${place.number_bathrooms} Bathroom
-                 </div>
-               </div>
-  
-               <!-- **********************
-        USER
-        **********************  -->
-               <div class="description">
-                 <p>${place.description.normalize()}</p>
-               </div>
-               <div class="reviews">
-                <h2>Reviews <span id="span-id">Show</span></h2>
-                <div id="review" class="active"  data-id="${place.id}">
-                  
-                </div>
-              </div>
-             <!-- End 1 PLACE Article -->
-          `)
-          );
-        });
-      }
+  function resolveAfter2Seconds (data) {
+    return new Promise(resolve => {
+      $.post({
+        url: placesSearch,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (data) {
+          resolve(data);
+        }
+      });
     });
   }
 
-  performFunctionXAfterDelay();
+  asyncCall(myPlaceSearch);
+  async function asyncCall (myPlaceSearch) {
+    var result = await resolveAfter2Seconds(myPlaceSearch);
 
-  button.on('click', () => {
-    const data = {};
-    data.amenities = getValueUsingClass();
-    data.states = getStateUsingClass();
-    data.cities = getCityUsingClass();
-    searchPlace(data);
-  });
-
-  function performFunctionXAfterDelay () {
-    // 1000 ms delay
-    setTimeout(() => {
-      const review = $('#review');
-
-      $('H2 SPAN#span-id').click(() => {
-        console.log($(this).text());
-        review.text('');
+    const data = result;
+    const names = [];
+    data.forEach(place => {
+      names.push(place.name.toLowerCase());
+    });
+    names.sort();
+    const op = data.sort(
+      (a, b) =>
+        names.indexOf(a.name.toLowerCase()) -
+          names.indexOf(b.name.toLowerCase()) || b.score - a.score
+    );
+    places.empty();
+    op.forEach(place => {
+      places.append(
+        $('<article></article>').html(`
+  
+      <!-- **********************
+      BEGIN 1 PLACE
+      ********************** -->
+  
+           <div class="title">
+             <h2>${place.name.normalize()}</h2>
+  
+             <div class="price_by_night">
+               ${place.price_by_night}
+             </div>
+           </div>
+           <div class="information">
+             <div class="max_guest">
+               <i class="fa fa-users fa-3x" aria-hidden="true"></i>
+  
+               <br />
+  
+               ${place.max_guest} Guests
+             </div>
+             <div class="number_rooms">
+               <i class="fa fa-bed fa-3x" aria-hidden="true"></i>
+  
+               <br />
+  
+               ${place.number_rooms} Bedrooms
+             </div>
+             <div class="number_bathrooms">
+               <i class="fa fa-bath fa-3x" aria-hidden="true"></i>
+  
+               <br />
+  
+               ${place.number_bathrooms} Bathroom
+             </div>
+           </div>
+  
+           <!-- **********************
+    USER
+    **********************  -->
+           <div class="description">
+             <p>${place.description.normalize()}</p>
+           </div>
+           <div class="reviews">
+                  <h2>Reviews <span id="span-id" class="first" data-id="${place.id}">Show</span></h2>
+                  <div id="rev" class="active" data-id="${place.id}">
+                  ${place.id}
+                  </div>
+            </div>
+         <!-- End 1 PLACE Article -->
+      `)
+      );
+    });
+    // expected output: 'resolved'
+    $(document.body).on('click', '.reviews', function (e) {
+      $(this).find('#span-id').text($(this).find('#span-id').text() === 'Show' ? 'Hide' : 'Show');
+      $(this).find('#rev').toggleClass('active');
+      const review = $(this).find('#rev');
+      review.text('');
+      if ($(this).find('#span-id').text() === 'Hide') {
         const placeId = review.attr('data-id');
-        review.toggleClass('active');
         const url = `http://localhost:5001/api/v1/places/${placeId}/reviews`;
         $.ajax({
           url: url,
           success: result => {
             result.forEach(res => {
-              console.log(res.user_id);
               const url1 = `http://localhost:5001/api/v1/users/${res.user_id}`;
               $.ajax({
                 url: url1,
                 success: data => {
+                  const fecha = new Date(data.updated_at);
+                  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                  console.log(fecha.getDay());
                   review.append(`
                     <ul>
                     <li>
-                        <h3>From ${data.first_name} ${data.last_name} the ${res.updated_at}</h3>
+                        <h3>From ${data.first_name} ${data.last_name} the ${fecha.getDay()}th ${months[fecha.getMonth()]} ${fecha.getFullYear()}</h3>
                         <p>
                           ${res.text}
                         </p>
@@ -161,9 +155,17 @@ $(window).on('load', function () {
             });
           }
         });
-      });
-    }, 600);
+      }
+    });
   }
+
+  button.on('click', () => {
+    const data = {};
+    data.amenities = getValueUsingClass();
+    data.states = getStateUsingClass();
+    data.cities = getCityUsingClass();
+    asyncCall(data);
+  });
 });
 
 function getValueUsingClass () {
