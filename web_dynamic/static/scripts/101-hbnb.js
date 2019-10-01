@@ -121,42 +121,43 @@ $(() => {
       );
     });
     // expected output: 'resolved'
-    $(document.body).on('click', '.reviews', function (e) {
-      $(this).find('#span-id').text($(this).find('#span-id').text() === 'Show' ? 'Hide' : 'Show');
-      $(this).find('#rev').toggleClass('active');
-      const review = $(this).find('#rev');
-      review.text('');
-      if ($(this).find('#span-id').text() === 'Hide') {
-        const placeId = review.attr('data-id');
-        const url = `http://localhost:5001/api/v1/places/${placeId}/reviews`;
-        $.ajax({
-          url: url,
-          success: result => {
-            result.forEach(res => {
-              const url1 = `http://localhost:5001/api/v1/users/${res.user_id}`;
-              $.ajax({
-                url: url1,
-                success: data => {
-                  const fecha = new Date(data.updated_at);
-                  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                  review.append(`
-                    <ul>
-                    <li>
-                        <h3>From ${data.first_name} ${data.last_name} the ${fecha.getDay()}th ${months[fecha.getMonth()]} ${fecha.getFullYear()}</h3>
-                        <p>
-                          ${res.text}
-                        </p>
-                      </li>
-                    </ul>
-                  `);
-                }
-              });
-            });
-          }
-        });
-      }
-    });
   }
+  $(document.body).on('click', '.reviews', function (e) {
+    $(this).find('#span-id').text($(this).find('#span-id').text() === 'Show' ? 'Hide' : 'Show');
+    $(this).find('#rev').toggleClass('active');
+    const review = $(this).find('#rev');
+    console.log(review);
+    review.empty();
+    if ($(this).find('#span-id').text() === 'Hide') {
+      const placeId = review.attr('data-id');
+      const url = `http://localhost:5001/api/v1/places/${placeId}/reviews`;
+      $.ajax({
+        url: url,
+        success: result => {
+          result.forEach(res => {
+            const url1 = `http://localhost:5001/api/v1/users/${res.user_id}`;
+            $.ajax({
+              url: url1,
+              success: data => {
+                const fecha = new Date(data.updated_at);
+                var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                review.append(`
+                  <ul>
+                  <li>
+                      <h3>From ${data.first_name} ${data.last_name} the ${fecha.getDay()}th ${months[fecha.getMonth()]} ${fecha.getFullYear()}</h3>
+                      <p>
+                        ${res.text}
+                      </p>
+                    </li>
+                  </ul>
+                `);
+              }
+            });
+          });
+        }
+      });
+    }
+  });
 
   button.on('click', () => {
     const data = {};
