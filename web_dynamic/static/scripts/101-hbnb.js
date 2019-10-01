@@ -133,14 +133,17 @@ $(() => {
       $.ajax({
         url: url,
         success: result => {
-          result.forEach(res => {
-            const url1 = `http://localhost:5001/api/v1/users/${res.user_id}`;
-            $.ajax({
-              url: url1,
-              success: data => {
-                const fecha = new Date(data.updated_at);
-                var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                review.append(`
+          if (result.length === 0) {
+            review.html('<h4>No Reviews Found!</h4>');
+          } else {
+            result.forEach(res => {
+              const url1 = `http://localhost:5001/api/v1/users/${res.user_id}`;
+              $.ajax({
+                url: url1,
+                success: data => {
+                  const fecha = new Date(data.updated_at);
+                  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                  review.append(`
                   <ul>
                   <li>
                       <h3>From ${data.first_name} ${data.last_name} the ${fecha.getDay()}th ${months[fecha.getMonth()]} ${fecha.getFullYear()}</h3>
@@ -150,9 +153,10 @@ $(() => {
                     </li>
                   </ul>
                 `);
-              }
+                }
+              });
             });
-          });
+          }
         }
       });
     }
