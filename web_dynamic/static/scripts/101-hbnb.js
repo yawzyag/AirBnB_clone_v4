@@ -126,7 +126,6 @@ $(() => {
     $(this).find('#span-id').text($(this).find('#span-id').text() === 'Show' ? 'Hide' : 'Show');
     $(this).find('#rev').toggleClass('active');
     const review = $(this).find('#rev');
-    console.log(review);
     review.empty();
     if ($(this).find('#span-id').text() === 'Hide') {
       const placeId = review.attr('data-id');
